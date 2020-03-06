@@ -1,0 +1,6 @@
+<%- include("partials/header") %>
+<% workers.forEach(worker => { %>
+<h2><%=worker.WRKRNAME%></h2>
+<p>Pf Id: <%= worker.PFNO%></p>
+<%})%>
+<%- include("partials/footer") %>
