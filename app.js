@@ -118,5 +118,5 @@ const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log('Yelp camp server is started');
-  console.log('app started on http://localhost:3002/')
+  console.log('app started on http://localhost:3000/')
 });
