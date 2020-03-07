@@ -6,8 +6,9 @@ var Worker = require('./models/worker');
 var Dailyentry = require('./models/dailyentry');
 var Kamjhari = require('./models/kamjhari')
 var seeddb = require('./seed')
+require('dotenv').config()
 
-mongoose.connect("mongodb://localhost:27017/projectTE", { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/projectTE", { useNewUrlParser: true, useUnifiedTopology: true });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 seeddb()
@@ -113,7 +114,9 @@ app.get('/workers/add', (req, res) => {
   res.render('addworker')
 })
 
-app.listen(3002, () => {
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
   console.log('Yelp camp server is started');
   console.log('app started on http://localhost:3002/')
 });
