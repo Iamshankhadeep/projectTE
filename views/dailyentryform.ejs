@@ -1,5 +1,5 @@
 <%- include("partials/header") %>
-<%= worker.name%>
+<%= worker.WRKRNAME %>
 <div class="container">
   <div class="row">
     <h1 style="text-align: center;">Add Daily Attendance</h1>
@@ -15,7 +15,11 @@
           </select>
         </div>
         <div class="form-group">
-            <input type="date" id=d"ate" name="date" value=<%= date %>>
+            <input type="date" id="date" name="date" value=<%= date %>>
+        </div>
+        <div class="form-group">
+          <input type="number" id="todayTargetPluckingTeaLeaves" name="todayTargetPluckingTeaLeaves"
+            value=<%= plucking.todayTargetPluckingTeaLeaves %>>
         </div>
         <div class="form-group">
           <button class="btn btn-default btn-lg btn-primary">Submit</button>

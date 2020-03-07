@@ -2,10 +2,12 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var mongoose = require("mongoose");
+var moment = require('moment');
 var Worker = require('./models/worker');
 var Dailyentry = require('./models/dailyentry');
 var Kamjhari = require('./models/kamjhari')
 var seeddb = require('./seed')
+var Plucking = require('./models/plucking')
 require('dotenv').config()
 
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/projectTE", { useNewUrlParser: true, useUnifiedTopology: true });
@@ -42,24 +44,52 @@ app.post('/workers', (req, res) => {
 })
 
 app.get('/dailyentry', (req, res) => {
-  Worker.find({}).populate('dailyentries').exec((err, allworkers) => {
+  var start = moment().startOf('day');
+  var search = {
+    date: {
+      $gte: start
+    }
+  }
+  Plucking.find(search, (err, plucking) => {
     if (err) {
       console.log(err)
-
     } else {
-      const maxLen = allworkers[0].dailyentries.length
-      let redirectUrl = '/dailyentry/' + allworkers[0]._id + '/add'
-      for (const worker of allworkers) {
-        if (worker.dailyentries.length === maxLen - 1) {
-          redirectUrl = '/dailyentry/' + worker._id + '/add'
-          break;
-        }
+      if (plucking.length === 0) {
+        var date = start.inspect().slice(8, 18)
+        return res.render('pluckingtype', { date: date });
       }
-      res.redirect(redirectUrl)
+      Worker.find({}).populate('dailyentries').exec((err, allworkers) => {
+        if (err) {
+          console.log(err)
+
+        } else {
+          const maxLen = allworkers[0].dailyentries.length
+          let redirectUrl = '/dailyentry/' + allworkers[0]._id + '/add'
+          for (const worker of allworkers) {
+            if (worker.dailyentries.length === maxLen - 1) {
+              redirectUrl = '/dailyentry/' + worker._id + '/add'
+              break;
+            }
+          }
+          res.redirect(redirectUrl)
+        }
+      })
     }
   })
 })
-
+app.post('/dailyentry/pluckingtype', (req, res) => {
+  var plucking = {
+    date: new Date(req.body.date),
+    todayTargetPluckingTeaLeaves: req.body.todayPluckingTarget,
+  }
+  Plucking.create(plucking, (err, plucking) => {
+    if (err) {
+      console.log(err)
+    } else {
+      res.redirect('/dailyentry')
+    }
+  })
+})
 app.get('/dailyentry/:id/add', (req, res) => {
   Worker.findById(req.params.id).exec((err, worker) => {
     if (err) {
@@ -70,8 +100,15 @@ app.get('/dailyentry/:id/add', (req, res) => {
           console.log(err);
         } else {
           var todayDate = new Date();
-          const date = todayDate.toISOString().slice(0, 10);
-          res.render('dailyentryform', { worker: worker, kamjhari: allkamjhari, date: date })
+          Plucking.find({}, (err, plucking) => {
+            if (err) {
+              console.log(err)
+            } else {
+              console.log(plucking[0])
+              const date = todayDate.toISOString().slice(0, 10);
+              res.render('dailyentryform', { worker: worker, kamjhari: allkamjhari, date: date, plucking: plucking })
+            }
+          })
         }
       })
     }
