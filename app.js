@@ -5,14 +5,22 @@ var mongoose = require("mongoose");
 var moment = require('moment');
 var Worker = require('./models/worker');
 var Dailyentry = require('./models/dailyentry');
-var Kamjhari = require('./models/kamjhari')
-var seeddb = require('./seed')
-var Plucking = require('./models/plucking')
+var Kamjhari = require('./models/kamjhari');
+var seeddb = require('./seed');
+var Plucking = require('./models/plucking');
+var session = require('express-session');
+var {redisStore} = require('./redis');
 require('dotenv').config()
 
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/projectTE", { useNewUrlParser: true, useUnifiedTopology: true });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
+app.use(session({
+  secret: 'whataview',
+  store: redisStore,
+  saveUninitialized: false,
+  resave: false
+}));
 seeddb()
 
 app.get('/', (req, res) => {

@@ -9,7 +9,7 @@
           <select class="selectpicker" data-style="btn-info" name="kamjharicode">
             <option value="">Select Kamjhari Code</option>
             <%for(const onekamjhari of kamjhari){%>
-            <option value="<%=onekamjhari.kamjharicode%>"><%=onekamjhari.kamjharicode+' '+onekamjhari.description%>
+            <option value="<%=onekamjhari.kamjharicode%>"><%=onekamjhari.kamjharicode+' ('+onekamjhari.description+')'%>
             </option>
             <%}%>
           </select>
