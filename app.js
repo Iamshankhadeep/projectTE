@@ -9,7 +9,7 @@ var Kamjhari = require('./models/kamjhari');
 var seeddb = require('./seed');
 var Plucking = require('./models/plucking');
 var session = require('express-session');
-var {redisStore} = require('./redis');
+// var {redisStore} = requires('./redis');
 require('dotenv').config()
 
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/projectTE", { useNewUrlParser: true, useUnifiedTopology: true });
@@ -17,7 +17,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 app.use(session({
   secret: 'whataview',
-  store: redisStore,
   saveUninitialized: false,
   resave: false
 }));
